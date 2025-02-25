@@ -1,63 +1,61 @@
 // Tenemos un li de productos
 
 const productos = [
-  {nombre: "Zapato negro", tipo: "zapato", color: "negro", img: "./taco-negro.jpg"},
-  {nombre: "Zapato azul", tipo: "zapato", color: "azul", img: "./taco-azul.jpg"},
-  {nombre: "Bota negra", tipo: "bota", color: "negro", img: "./bota-negra.jpg"},
-  {nombre: "Bota azul", tipo: "bota", color: "azul", img: "./bota-azul.jpg"},
-  {nombre: "Zapato rojo", tipo: "zapato", color: "rojo", img: "./zapato-rojo.jpg"}
-]
+  {nombre: "Zapato negro", tipo: "zapato", color: "negro", img: "assets/taco-negro.jpg"},
+  {nombre: "Zapato azul", tipo: "zapato", color: "azul", img: "assets/taco-azul.jpg"},
+  {nombre: "Bota negra", tipo: "bota", color: "negro", img: "assets/bota-negra.jpg"},
+  {nombre: "Bota azul", tipo: "bota", color: "azul", img: "assets/bota-azul.jpg"},
+  {nombre: "Zapato rojo", tipo: "zapato", color: "rojo", img: "assets/zapato-rojo.jpg"}
+]; //Le agregué ;
 
-const li = document.getElementsByName("lista-de-productos")
-const $i = document.querySelector('.input');
+// Selección de elementos del HTML
+const listaProductos = document.getElementById("lista-de-productos"); //Usar getEmentById en lugar de get ElementByName
+const input = document.querySelector("input[type='text']"); //Seleccionar bien el input ya que no tiene una clase
+const botonFiltro = document.querySelector("button");
 
-for (let i = 0; i < productos.length; i++) {
-  var d = document.createElement("div")
-  d.classList.add("producto")
+// Función para mostrar productos
+function mostrarProductos(productos) {
+  listaProductos.innerHTML = ""; //Para limpiar la lista antes de agregar un nuevo producto
 
-  var ti = document.createElement("p")
-  ti.classList.add("titulo")
-  ti.textContent = productos[i].nombre
-  
-  var imagen = document.createElement("img");
-  imagen.setAttribute('src', productos[i].img);
+  //Recorrer cada producto y crear un elemento HTML para mostrarlo
+  productos.forEach(producto => {
+    const divProducto = document.createElement("div");
+    divProducto.classList.add("producto");
 
-  d.appendChild(ti)
-  d.appendChild(imagen)
+    const nombreProducto = document.createElement("p"); // para el nombre del producto
+    nombreProducto.textContent = producto.nombre;
 
-  li.appendChild(d)
+    const imagenProducto = document.createElement("img");
+    imagenProducto.src = producto.img;
+
+    divProducto.appendChild(nombreProducto); // agregar el nombre y la imagen al div 
+    divProducto.appendChild(imagenProducto);
+
+    listaProductos.appendChild(divProducto); // agregar el producto a la lista
+  });
 }
 
-displayProductos(productos)
-const botonDeFiltro = document.querySelector("button");
+// Mostrar todos los productos en la página
+mostrarProductos(productos);
 
-botonDeFiltro.onclick = function() {
-  while (li.firstChild) {
-    li.removeChild(li.firstChild);
-  }
+// filtrar productos
+function filtrarProductos(texto) {
+  // Convertir el texto a minúsculas para que no interfiera que hubieran mayúsculas
+  texto = texto.toLowerCase();
 
-  const texto = $i.value;
-  console.log(texto);
-  const productosFiltrados = filtrado(productos, texto );
+  //Usar toLowerCase() en el texto y en los valores de los productos.
+  const productosFiltrados = productos.filter(producto => {
+    return (
+      producto.nombre.toLowerCase().includes(texto) ||
+      producto.tipo.toLowerCase().includes(texto) ||
+      producto.color.toLowerCase().includes(texto)
+    );
+  });
 
-  for (let i = 0; i < productosFiltrados.length; i++) {
-    var d = document.createElement("div")
-    d.classList.add("producto")
-  
-    var ti = document.createElement("p")
-    ti.classList.add("titulo")
-    ti.textContent = productosFiltrados[i].nombre
-    
-    var imagen = document.createElement("img");
-    imagen.setAttribute('src', productosFiltrados[i].img);
-  
-    d.appendChild(ti)
-    d.appendChild(imagen)
-  
-    li.appendChild(d)
-  }
+  mostrarProductos(productosFiltrados);
 }
 
-const filtrado = (productos = [], texto) => {
-  return productos.filter(item => item.tipo.includes(texto) || item.color.includes(texto));
-}  
+botonFiltro.addEventListener("click", () => { // se cambió botonDeFiltro.onclick ya que no es el mejor para manejar eventos y se cambio a addEventListener.
+  const texto = input.value; 
+  filtrarProductos(texto); 
+});
